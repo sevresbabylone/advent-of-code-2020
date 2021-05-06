@@ -8,7 +8,7 @@
     "strictPropertyInitialization": true,
     "sourceMap": true,
     "outDir": "dist",
-    "types": ["node", "jest"],
+    "types": ["node", "jest"]
   },
   "include": ["**/*.ts"]
 }

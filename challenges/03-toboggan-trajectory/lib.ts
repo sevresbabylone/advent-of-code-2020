@@ -30,10 +30,21 @@ export class Terrain {
     let count = 0;
     let currentPosition = { right: 0, down: 0 };
     while (currentPosition.down < this.height - 1) {
-      currentPosition = this.move(currentPosition, { right: 3, down: 1 });
-      console.log({ currentPosition });
+      currentPosition = this.move(currentPosition, directionVector);
+      if (currentPosition.down >= this.height) break;
       if (this.hasTree(currentPosition)) count++;
     }
     return count;
   }
+  getAllTreeCounts(directionVectors: Vector[]): number[] {
+    return directionVectors.map((directionVector: Vector) => {
+      return this.getNoOfTreesInPathFromOrigin(directionVector);
+    });
+  }
 }
+
+export const multiplyArrayOfNumbers = (numArray: number[]): number => {
+  return numArray.reduce((acc, current) => {
+    return acc * current;
+  }, 1);
+};
