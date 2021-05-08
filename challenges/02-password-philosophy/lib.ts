@@ -29,13 +29,12 @@ export const parseMultiplePasswordPolicyStrings = (
 
 export const countValidPasswords = (
   passwordPolicyItems: PasswordPolicy[],
-  validationMethod: (passwordPolicy: PasswordPolicy) => boolean,
+  isValid: (passwordPolicy: PasswordPolicy) => boolean,
 ): number => {
   return passwordPolicyItems.reduce((count, item) => {
-    if (validationMethod(item)) return count + 1;
+    if (isValid(item)) return count + 1;
     else return count;
   }, 0);
-  return 0;
 };
 
 export const validatePasswordByCharacterLimit = (

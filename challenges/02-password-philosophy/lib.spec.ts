@@ -12,12 +12,6 @@ const validPasswordPolicy = {
   char: "a",
   password: "abcde",
 };
-const invalidPasswordPolicy = {
-  x: 1,
-  y: 3,
-  char: "b",
-  password: "cdefg",
-};
 
 describe("parseSinglePasswordPolicyString", () => {
   it("should parse valid string into a passwordPolicy object", () => {
@@ -72,11 +66,18 @@ describe("validatePasswordByCharacterLimit", () => {
 });
 
 describe("countValidPasswords", () => {
-  it("should return correct number of valid passwords in array", () => {
+  it("should return correct number of valid passwords in array based on validation method", () => {
+    const mockedIsValid = jest.fn();
+    mockedIsValid.mockReturnValueOnce(true).mockReturnValue(false);
     expect(
       countValidPasswords(
-        [validPasswordPolicy, invalidPasswordPolicy],
-        validatePasswordByCharacterLimit,
+        [
+          validPasswordPolicy,
+          validPasswordPolicy,
+          validPasswordPolicy,
+          validPasswordPolicy,
+        ],
+        mockedIsValid,
       ),
     ).toEqual(1);
   });
