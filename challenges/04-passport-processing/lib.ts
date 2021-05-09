@@ -1,6 +1,5 @@
-import { type } from "os";
-
 const FIELDS = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid", "cid"];
+
 export const ALLOWED_EYE_COLORS = [
   "amb",
   "blu",
@@ -121,8 +120,8 @@ export const checkPassportHasAllFields = (
 export const checkPassportValidStrict = (
   passport: Partial<Passport>,
 ): boolean => {
-  if (!checkPassportHasAllFields(passport)) return false;
   return (
+    checkPassportHasAllFields(passport) &&
     isBirthYearValid(passport) &&
     isIssueYearValid(passport) &&
     isExpirationYearValid(passport) &&

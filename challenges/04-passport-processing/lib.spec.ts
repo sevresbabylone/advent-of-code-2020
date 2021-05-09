@@ -35,10 +35,6 @@ describe("countValidPassports", () => {
   });
 });
 
-describe("checkPassportValid", () => {});
-
-describe("checkPassportValidStrict", () => {});
-
 describe("BYR: isBirthYearValid", () => {
   const tooYoungBirthYearPassport: Partial<Passport> = { byr: "2020" };
   const tooOldBirthYearPassport: Partial<Passport> = { byr: "1919" };
@@ -192,3 +188,7 @@ describe("PID: isPassportIDValid", () => {
     expect(isPassportIDValid(tooLongPassportID)).toEqual(false);
   });
 });
+
+describe("checkPassportHasAllFields", () => {});
+
+describe("checkPassportValidStrict", () => {});
