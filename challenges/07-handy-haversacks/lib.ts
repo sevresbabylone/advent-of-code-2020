@@ -1,34 +1,13 @@
-export interface Edge {
+export interface AdjacentBag {
   color: string;
   amount: number;
 }
 
-export const processLineItems = (input: string): Map<string, Edge[]> => {
-  return createColorToEdgesMap(input.split("\n").filter(Boolean));
+export const processStringInput = (input: string): string[] => {
+  return input.split("\n").filter(Boolean);
 };
 
-export const createColorToEdgesMap = (
-  lineItems: string[],
-): Map<string, Edge[]> => {
-  const colorToEdgesMap = new Map();
-  lineItems.forEach((lineItem) => {
-    const [color, edges] = processLineItem(lineItem);
-    colorToEdgesMap.set(color, edges);
-  });
-  return colorToEdgesMap;
-};
-
-export const addLineItemsToMap = (
-  lineItems: string[],
-  colorToEdgesMap: Map<string, Edge[]>,
-): void => {
-  lineItems.forEach((lineItem) => {
-    const [color, edges] = processLineItem(lineItem);
-    colorToEdgesMap.set(color, edges);
-  });
-};
-
-export const processLineItem = (lineItem: string): [string, Edge[]] => {
+export const processLineItem = (lineItem: string): [string, AdjacentBag[]] => {
   const bags = lineItem.split(" bags contain ");
   const color = bags[0];
   if (!lineItem.match(/\d/)) return [color, []];
@@ -44,21 +23,31 @@ export const processLineItem = (lineItem: string): [string, Edge[]] => {
       amount: amount,
     };
   });
-
   return [color, edges];
+};
+
+export const createColorMap = (
+  lineItems: string[],
+): Map<string, AdjacentBag[]> => {
+  const colorMap = new Map();
+  lineItems.forEach((lineItem) => {
+    const [color, edges] = processLineItem(lineItem);
+    colorMap.set(color, edges);
+  });
+  return colorMap;
 };
 
 export const canContainTargetBag = (
   outermostBagColor: string,
   targetBagColor: string,
-  colorToEdgesMap: Map<string, Edge[]>,
+  colorMap: Map<string, AdjacentBag[]>,
 ): boolean => {
-  const adjacentColors = colorToEdgesMap.get(outermostBagColor);
-  if (adjacentColors === undefined) return false;
-  if (adjacentColors.find(({ color }) => color === targetBagColor)) return true;
+  const adjacentBags = colorMap.get(outermostBagColor);
+  if (adjacentBags === undefined) return false;
+  if (adjacentBags.find(({ color }) => color === targetBagColor)) return true;
 
-  for (const adjacent of adjacentColors) {
-    if (canContainTargetBag(adjacent.color, targetBagColor, colorToEdgesMap))
+  for (const adjacentBag of adjacentBags) {
+    if (canContainTargetBag(adjacentBag.color, targetBagColor, colorMap))
       return true;
   }
   return false;
@@ -66,24 +55,24 @@ export const canContainTargetBag = (
 
 export const countBagsContainingTargetColor = (
   targetBagColor: string,
-  colorToEdgesMap: Map<string, Edge[]>,
+  colorMap: Map<string, AdjacentBag[]>,
 ): number => {
   let count = 0;
-  colorToEdgesMap.forEach((v, color) => {
-    if (canContainTargetBag(color, targetBagColor, colorToEdgesMap)) count++;
+  colorMap.forEach((v, color) => {
+    if (canContainTargetBag(color, targetBagColor, colorMap)) count++;
   });
   return count;
 };
 
 export const countAllInnerBags = (
   outermostBagColor: string,
-  colorToEdgesMap: Map<string, Edge[]>,
+  colorMap: Map<string, AdjacentBag[]>,
 ): number => {
   const countInside = (currentOutermostBagColor: string) => {
-    const edges = colorToEdgesMap.get(currentOutermostBagColor);
-    if (edges === undefined) return 1;
-    return edges.reduce((acc, edge) => {
-      const { amount, color } = edge;
+    const outmostAdjacentBags = colorMap.get(currentOutermostBagColor);
+    if (outmostAdjacentBags === undefined) return 1;
+    return outmostAdjacentBags.reduce((acc, outmostAdjacentBag) => {
+      const { amount, color } = outmostAdjacentBag;
       return acc + amount * countInside(color);
     }, 1);
   };
