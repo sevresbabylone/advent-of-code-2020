@@ -1,7 +1,7 @@
 import readInput from "../../utils/readInput";
 import {
   countBagsContainingTargetColor,
-  countAllInnerBags,
+  getNumOfRequiredBags,
   createColorMap,
   processStringInput,
 } from "./lib";
@@ -10,4 +10,4 @@ const batchFile = readInput();
 const lineItems = processStringInput(batchFile);
 const colorToEdgesMap = createColorMap(lineItems);
 console.log(countBagsContainingTargetColor("shiny gold", colorToEdgesMap));
-console.log(countAllInnerBags("shiny gold", colorToEdgesMap));
+console.log(getNumOfRequiredBags("shiny gold", colorToEdgesMap));

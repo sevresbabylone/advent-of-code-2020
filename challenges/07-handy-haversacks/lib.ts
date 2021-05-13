@@ -64,17 +64,18 @@ export const countBagsContainingTargetColor = (
   return count;
 };
 
-export const countAllInnerBags = (
+export const getNumOfRequiredBags = (
   outermostBagColor: string,
   colorMap: Map<string, AdjacentBag[]>,
 ): number => {
-  const countInside = (currentOutermostBagColor: string) => {
-    const outmostAdjacentBags = colorMap.get(currentOutermostBagColor);
-    if (outmostAdjacentBags === undefined) return 1;
-    return outmostAdjacentBags.reduce((acc, outmostAdjacentBag) => {
-      const { amount, color } = outmostAdjacentBag;
-      return acc + amount * countInside(color);
+  const countAllInnerBags = (currentOutermostBagColor: string) => {
+    const outermostAdjacentBags = colorMap.get(currentOutermostBagColor);
+    if (outermostAdjacentBags === undefined) return 1;
+    return outermostAdjacentBags.reduce((acc, outermostAdjacentBag) => {
+      const { amount, color } = outermostAdjacentBag;
+      const count = acc + amount * countAllInnerBags(color);
+      return count;
     }, 1);
   };
-  return countInside(outermostBagColor) - 1;
+  return countAllInnerBags(outermostBagColor) - 1;
 };

@@ -1,4 +1,3 @@
-import { count } from "console";
 import {
   countAllQuestions,
   countQuestionsEveryoneYes,

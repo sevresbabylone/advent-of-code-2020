@@ -1,6 +1,6 @@
 import {
   canContainTargetBag,
-  countAllInnerBags,
+  getNumOfRequiredBags,
   countBagsContainingTargetColor,
   createColorMap,
   processLineItem,
@@ -60,7 +60,7 @@ describe("countBagsContainingTargetColor", () => {
   });
 });
 
-describe("countAllInnerBags", () => {
+describe("getNumOfRequiredBags", () => {
   const testMap2 = createColorMap([
     "shiny gold bags contain 2 dark red bags.",
     "dark red bags contain 2 dark orange bags.",
@@ -72,9 +72,9 @@ describe("countAllInnerBags", () => {
   ]);
 
   it("should return 0 if outermostBag contains no bags", () => {
-    expect(countAllInnerBags("drab magenta", testMap2)).toEqual(0);
+    expect(getNumOfRequiredBags("drab magenta", testMap2)).toEqual(0);
   });
   it("should return correct number of innerBags", () => {
-    expect(countAllInnerBags("shiny gold", testMap2)).toEqual(126);
+    expect(getNumOfRequiredBags("shiny gold", testMap2)).toEqual(126);
   });
 });
