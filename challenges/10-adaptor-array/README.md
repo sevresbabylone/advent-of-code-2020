@@ -88,3 +88,7 @@ In this larger example, in a chain that uses all of the adapters, there are 22 d
 Find a chain that uses all of your adapters to connect the charging outlet to your device's built-in adapter and count the joltage differences between the charging outlet, the adapters, and your device. What is the number of 1-jolt differences multiplied by the number of 3-jolt differences?
 
 # Approach
+
+Started with the assumption that the question required a way of finding all paths from outlet to device, therefore used BFS in an unweighted directed acyclic graph where each adaptor is represented by a vertex. Unfortunately (as the question hinted), while it works for smaller arrays, the number of paths starts to exponentially increase as the array size increases.
+
+After checking out what other people had done, I followed the solution [here](https://www.reddit.com/r/adventofcode/comments/ka8z8x/2020_day_10_solutions/gfcxuxf?utm_source=share&utm_medium=web2x&context=3)

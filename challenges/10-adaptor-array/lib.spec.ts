@@ -1,13 +1,14 @@
+import Graph, { createAdjacencyList } from "./Graph";
 import {
-  addDeviceAndOutletJoltages,
+  addDeviceAndOutlet,
+  countAdaptorCombinations,
   countJoltageDifferences,
-  createAdjacencyList,
-  createAdjacencyMatrix,
-  Graph,
   sortDescending,
 } from "./lib";
 
-const largeJoltages = [
+const simple = [0, 1, 3, 7, 4];
+const small = addDeviceAndOutlet([16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4]);
+const large = addDeviceAndOutlet([
   28,
   33,
   18,
@@ -39,25 +40,23 @@ const largeJoltages = [
   34,
   10,
   3,
-];
+]);
+
 describe("sortDescending", () => {
-  it("sorts numbers in ascending order", () => {
+  it("sorts numbers in descending order", () => {
     expect(sortDescending([3, 4, 5, 2, 1])).toEqual([5, 4, 3, 2, 1]);
   });
 });
 
-describe("addDeviceAndOutletJoltages", () => {
-  it("adds correct device and outlet joltages to array of numbers", () => {
-    expect(addDeviceAndOutletJoltages([2])).toEqual([2, 5, 0]);
+describe("addDeviceAndOutlet", () => {
+  it("adds 0 (outlet) and device (max + 3) to array", () => {
+    expect(addDeviceAndOutlet([2])).toEqual([2, 5, 0]);
   });
 });
 
 describe("countJoltageDifferences", () => {
-  const testLarge = addDeviceAndOutletJoltages(largeJoltages);
   it("returns a map of joltage difference vs number of occurences", () => {
-    const differences = countJoltageDifferences(
-      testLarge.sort((a, b) => b - a),
-    );
+    const differences = countJoltageDifferences(large);
     expect(differences.get(1)).toEqual(22);
     expect(differences.get(3)).toEqual(10);
   });
@@ -72,13 +71,9 @@ describe("createAdjacencyList", () => {
 });
 
 describe("Class: Graph", () => {
-  const simpleJoltages = [0, 1, 3, 7, 4];
-  const simpleGraph = new Graph(simpleJoltages);
-
-  const smallJoltages = [16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4];
-  const smallGraph = new Graph(addDeviceAndOutletJoltages(smallJoltages));
-
-  const largeGraph = new Graph(addDeviceAndOutletJoltages(largeJoltages));
+  const simpleGraph = new Graph(simple);
+  const smallGraph = new Graph(small);
+  const largeGraph = new Graph(large);
   describe("getAllPathsBFS", () => {
     it("should return correct list of possible paths", () => {
       expect(simpleGraph.getAllPathsBFS(0, 7)).toEqual(
@@ -91,5 +86,13 @@ describe("Class: Graph", () => {
       expect(smallGraph.getAllPathsBFS(0, 22).length).toEqual(8);
       expect(largeGraph.getAllPathsBFS(0, 52).length).toEqual(19208);
     });
+  });
+});
+
+describe("countAdaptorCombinations", () => {
+  it("returns correct count of possible paths", () => {
+    expect(countAdaptorCombinations(simple)).toEqual(3);
+    expect(countAdaptorCombinations(small)).toEqual(8);
+    expect(countAdaptorCombinations(large)).toEqual(19208);
   });
 });

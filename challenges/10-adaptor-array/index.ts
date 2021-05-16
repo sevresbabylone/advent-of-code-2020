@@ -1,20 +1,20 @@
 import readInput, { processInput } from "../../utils/readInput";
 import {
-  addDeviceAndOutletJoltages,
+  addDeviceAndOutlet,
+  countAdaptorCombinations,
   countJoltageDifferences,
-  Graph,
   sortDescending,
 } from "./lib";
 
 const input = readInput();
-let joltages = processInput(input);
-joltages = addDeviceAndOutletJoltages(joltages);
+let adaptors = processInput(input);
+adaptors = addDeviceAndOutlet(adaptors);
 
-joltages = sortDescending(joltages);
-const differences = countJoltageDifferences(joltages);
+adaptors = sortDescending(adaptors);
+const differences = countJoltageDifferences(adaptors);
 console.log(differences);
 
-const joltageGraph = new Graph(joltages);
-const outletVoltage = Math.max(...joltages);
-const allCombinations = joltageGraph.getAllPathsBFS(0, outletVoltage);
-console.log(allCombinations.length);
+const simple = [0, 1, 3, 7, 4];
+
+const count = countAdaptorCombinations(simple);
+console.log(count);
