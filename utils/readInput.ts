@@ -13,3 +13,10 @@ const readInput = () => {
 };
 
 export default readInput;
+
+function isDefined<T>(arg: T | undefined): arg is T {
+  return typeof arg !== undefined;
+}
+export const processInput = (input: string): number[] => {
+  return input.split("\n").filter(Boolean).map(Number);
+};

@@ -1,10 +1,5 @@
-import readInput from "../../utils/readInput";
-import {
-  findContiguousSlice,
-  findInvalid,
-  processInput,
-  sumOfMaxAndMin,
-} from "./lib";
+import readInput, { processInput } from "../../utils/readInput";
+import { findContiguousSlice, findInvalid, sumOfMaxAndMin } from "./lib";
 
 const input = readInput();
 const numbers = processInput(input);

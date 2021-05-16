@@ -1,7 +1,3 @@
-export const processInput = (input: string): number[] => {
-  return input.split("\n").filter(Boolean).map(Number);
-};
-
 export const getAllSums = (numbers: number[]): Set<number> => {
   const sums: Set<number> = new Set();
   numbers.forEach((a, index) => {
