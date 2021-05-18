@@ -1,5 +1,3 @@
-import path = require("path");
-
 const OUTLET_JOLTAGE = 0;
 const DEFAULT_DEVICE_JOLTAGE_DIFFERENCE = 3;
 
