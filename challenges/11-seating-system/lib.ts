@@ -18,7 +18,7 @@ export const toGrid = (seatLayout: string[]): string[][] => {
   return seatLayout.map((row) => Array.from(row));
 };
 
-export const countNeighbours = (
+export const countAdjNeighbours = (
   grid: string[][],
   rowIndex: number,
   columnIndex: number,
@@ -28,13 +28,7 @@ export const countNeighbours = (
     const [y, x] = direction;
     const adjRowIndex = rowIndex + y;
     const adjColumnIndex = columnIndex + x;
-    if (
-      adjColumnIndex < 0 ||
-      adjColumnIndex > grid[0].length - 1 ||
-      adjRowIndex < 0 ||
-      adjRowIndex > grid.length - 1
-    )
-      return;
+    if (isOutOfBounds(grid, adjRowIndex, adjColumnIndex)) return;
     if (grid[adjRowIndex][adjColumnIndex] === STATES.Occupied) occupied++;
   });
   return occupied;
@@ -51,7 +45,7 @@ export const areStatesEqual = (
 export const changeState = (grid: string[][]): string[][] => {
   return grid.map((row, rowIndex) => {
     return row.map((char, columnIndex) => {
-      const noOfNeighbours = countNeighbours(grid, rowIndex, columnIndex);
+      const noOfNeighbours = countAdjNeighbours(grid, rowIndex, columnIndex);
       if (char === STATES.Occupied && noOfNeighbours >= 4) return STATES.Empty;
       if (char === STATES.Empty && noOfNeighbours === 0) return STATES.Occupied;
       return char;
@@ -69,7 +63,10 @@ export const countTotalOccupied = (grid: string[][]): number => {
   return totalOccupied;
 };
 
-export const runTillStable = (grid: string[][]): number => {
+export const runTillStable = (
+  grid: string[][],
+  changeState: (grid: string[][]) => string[][],
+): number => {
   let isStable = false;
   let currentState = [...grid];
   let nextState: string[][] = [];
@@ -77,7 +74,56 @@ export const runTillStable = (grid: string[][]): number => {
     nextState = changeState(currentState);
     isStable = areStatesEqual(currentState, nextState);
     currentState = nextState;
+    currentState.forEach((row) => {
+      console.log(row.join(""));
+    });
+    console.log("\n");
   }
 
   return countTotalOccupied(currentState);
+};
+
+export const isOutOfBounds = (
+  grid: string[][],
+  rowIndex: number,
+  columnIndex: number,
+): boolean => {
+  return (
+    columnIndex < 0 ||
+    columnIndex > grid[0].length - 1 ||
+    rowIndex < 0 ||
+    rowIndex > grid.length - 1
+  );
+};
+export const countVectorNeighbours = (
+  grid: string[][],
+  rowIndex: number,
+  columnIndex: number,
+): number => {
+  let occupied = 0;
+  directions.forEach((direction) => {
+    let [y, x] = direction;
+    let adjRowIndex = y + rowIndex;
+    let adjColumnIndex = x + columnIndex;
+    while (!isOutOfBounds(grid, adjRowIndex, adjColumnIndex)) {
+      if (grid[adjRowIndex][adjColumnIndex] === STATES.Occupied) {
+        occupied += 1;
+        break;
+      }
+      adjRowIndex += y;
+      adjColumnIndex += x;
+    }
+  });
+  return occupied;
+};
+
+export const changeStateHighThreshold = (grid: string[][]): string[][] => {
+  return grid.map((row, rowIndex) => {
+    return row.map((char, columnIndex) => {
+      const noOfNeighbours = countVectorNeighbours(grid, rowIndex, columnIndex);
+      if (char === STATES.Occupied && noOfNeighbours >= 5) return STATES.Empty;
+      if (char === STATES.Empty && noOfNeighbours === 0) return STATES.Occupied;
+      return char;
+    });
+  });
 };
