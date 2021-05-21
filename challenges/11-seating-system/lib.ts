@@ -74,10 +74,6 @@ export const runTillStable = (
     nextState = changeState(currentState);
     isStable = areStatesEqual(currentState, nextState);
     currentState = nextState;
-    currentState.forEach((row) => {
-      console.log(row.join(""));
-    });
-    console.log("\n");
   }
 
   return countTotalOccupied(currentState);
@@ -106,7 +102,9 @@ export const countVectorNeighbours = (
     let adjRowIndex = y + rowIndex;
     let adjColumnIndex = x + columnIndex;
     while (!isOutOfBounds(grid, adjRowIndex, adjColumnIndex)) {
-      if (grid[adjRowIndex][adjColumnIndex] === STATES.Occupied) {
+      const currentNeighbourToCheck = grid[adjRowIndex][adjColumnIndex];
+      if (currentNeighbourToCheck === STATES.Empty) break;
+      if (currentNeighbourToCheck === STATES.Occupied) {
         occupied += 1;
         break;
       }
