@@ -42,16 +42,15 @@ export const areStatesEqual = (
   return false;
 };
 
-export const changeState = (grid: string[][]): string[][] => {
-  return grid.map((row, rowIndex) => {
-    return row.map((char, columnIndex) => {
+export const changeState = (grid: string[][]): string[][] =>
+  grid.map((row, rowIndex) =>
+    row.map((char, columnIndex) => {
       const noOfNeighbours = countAdjNeighbours(grid, rowIndex, columnIndex);
       if (char === STATES.Occupied && noOfNeighbours >= 4) return STATES.Empty;
       if (char === STATES.Empty && noOfNeighbours === 0) return STATES.Occupied;
       return char;
-    });
-  });
-};
+    }),
+  );
 
 export const countTotalOccupied = (grid: string[][]): number => {
   let totalOccupied = 0;
@@ -91,6 +90,7 @@ export const isOutOfBounds = (
     rowIndex > grid.length - 1
   );
 };
+
 export const countVectorNeighbours = (
   grid: string[][],
   rowIndex: number,
@@ -115,13 +115,12 @@ export const countVectorNeighbours = (
   return occupied;
 };
 
-export const changeStateHighThreshold = (grid: string[][]): string[][] => {
-  return grid.map((row, rowIndex) => {
-    return row.map((char, columnIndex) => {
+export const changeStateHighThreshold = (grid: string[][]): string[][] =>
+  grid.map((row, rowIndex) =>
+    row.map((char, columnIndex) => {
       const noOfNeighbours = countVectorNeighbours(grid, rowIndex, columnIndex);
       if (char === STATES.Occupied && noOfNeighbours >= 5) return STATES.Empty;
       if (char === STATES.Empty && noOfNeighbours === 0) return STATES.Occupied;
       return char;
-    });
-  });
-};
+    }),
+  );
