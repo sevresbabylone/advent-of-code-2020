@@ -23,8 +23,8 @@ export enum ACTIONS {
   East = "E",
   West = "W",
   Forward = "F",
-  Clockwise = "L",
-  AntiClockwise = "R",
+  AntiClockwise = "L",
+  Clockwise = "R",
 }
 export const DIRECTIONS = {
   N: { x: 0, y: 1 },
@@ -44,7 +44,7 @@ export const getNewDirection = (
   rotation: number,
 ): number => {
   let newAngle: number;
-  if (direction === ACTIONS.AntiClockwise) newAngle = currentAngle - rotation;
+  if (direction === ACTIONS.Clockwise) newAngle = currentAngle - rotation;
   else newAngle = currentAngle + rotation;
   newAngle = (360 + newAngle) % 360;
   return newAngle;

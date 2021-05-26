@@ -2,8 +2,8 @@ import { getNewDirection, lineToInstruction, ACTIONS, Ship } from "./lib";
 
 describe("getNewDirection", () => {
   it("returns the positive angle value, in degrees, of sum of currentAngle and angle of rotation", () => {
-    expect(getNewDirection(ACTIONS.AntiClockwise, 0, 40)).toEqual(320);
-    expect(getNewDirection(ACTIONS.Clockwise, 0, 60)).toEqual(60);
+    expect(getNewDirection(ACTIONS.AntiClockwise, 0, 40)).toEqual(40);
+    expect(getNewDirection(ACTIONS.Clockwise, 0, 60)).toEqual(300);
   });
 });
 describe("lineToInstruction", () => {
@@ -18,11 +18,11 @@ describe("lineToInstruction", () => {
 describe("Class - Ship", () => {
   const testShip = new Ship();
   describe("Ship - move", () => {
-    it("updates currentAngle when AntiClockwise instruction is processed", () => {
+    it("updates currentAngle when Clockwise instruction is processed", () => {
       testShip.move(lineToInstruction("R40"));
       expect(testShip.currentAngleInDeg).toEqual(320);
     });
-    it("updates currentAngle when Clockwise instruction is processed", () => {
+    it("updates currentAngle when AntiClockwise instruction is processed", () => {
       testShip.move(lineToInstruction("L80"));
       expect(testShip.currentAngleInDeg).toEqual(80);
     });

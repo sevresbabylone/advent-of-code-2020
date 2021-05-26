@@ -1,4 +1,4 @@
-import readInput from "../../utils/readInput";
+import readInput from "../../../utils/readInput";
 import { processInput, Ship } from "./lib";
 const input = readInput();
 const instructions = processInput(input);
