@@ -7,22 +7,6 @@ export const degreesToRadian = (deg: number): number => {
 export const radiansToDegrees = (radians: number): number => {
   return (radians * 180) / Math.PI;
 };
-
-export const processInput = (input: string): Instruction[] =>
-  input.split("\n").filter(Boolean).map(lineToInstruction);
-
-export interface Vector {
-  x: number;
-  y: number;
-}
-
-const addVectors = (v1: Vector, v2: Vector) => {
-  return { x: v1.x + v2.x, y: v1.y + v2.y };
-};
-const multiplyVectorByScale = (v: Vector, scale: number) => {
-  return { x: v.x * scale, y: v.y * scale };
-};
-
 export enum ACTIONS {
   North = "N",
   South = "S",
@@ -43,7 +27,10 @@ export interface Instruction {
   action: any;
   value: number;
 }
-
+export interface Vector {
+  x: number;
+  y: number;
+}
 export const lineToInstruction = (line: string): Instruction => {
   const value = Number(line.replace(/[A-Za-z]/, ""));
   const action = line.replace(/[0-9]+/, "");
@@ -52,41 +39,69 @@ export const lineToInstruction = (line: string): Instruction => {
     value,
   };
 };
+export const processInput = (input: string): Instruction[] =>
+  input.split("\n").filter(Boolean).map(lineToInstruction);
+
+const addVectors = (v1: Vector, v2: Vector) => {
+  return { x: v1.x + v2.x, y: v1.y + v2.y };
+};
+const multiplyVectorByScale = (v: Vector, scale: number) => {
+  return { x: v.x * scale, y: v.y * scale };
+};
 
 export class Ship {
-  waypoint: Vector;
   currentPosition: Vector;
-  constructor(currentPosition: Vector = { x: 0, y: 0 }, waypoint: Vector) {
-    this.waypoint = waypoint;
-    this.currentPosition = currentPosition;
+  waypointPosition: Vector;
+  constructor(startingPosition: Vector, waypointPosition: Vector) {
+    this.currentPosition = startingPosition;
+    this.waypointPosition = waypointPosition;
   }
-  reset() {
-    this.currentPosition = { x: 0, y: 0 };
-    this.waypoint = { x: 0, y: 0 };
+  moveWaypoint(action: ACTIONS, value: number) {
+    this.waypointPosition = addVectors(
+      this.waypointPosition,
+      multiplyVectorByScale(DIRECTIONS[action], value),
+    );
   }
   getAngleAroundShip(): number {
-    const opposite = this.waypoint.y - this.currentPosition.y;
-    const adjacent = this.waypoint.x - this.currentPosition.x;
-    let angleInRadians = atan(opposite / adjacent);
+    // directly above, or directly below
+    if (this.waypointPosition.x === 0) {
+      if (this.waypointPosition.y > 0) return 90;
+      else return 270;
+    }
+    if (this.waypointPosition.y === 0) {
+      if (this.waypointPosition.x > 0) return 0;
+      else return 180;
+    }
+    let angleInRadians = atan(
+      Math.abs(this.waypointPosition.y) / Math.abs(this.waypointPosition.x),
+    );
     let angleInDegrees = radiansToDegrees(angleInRadians);
-    if ((adjacent < 0 && opposite < 0) || (adjacent < 0 && opposite > 0))
+    // quadrant 2
+    if (this.waypointPosition.x < 0 && this.waypointPosition.y >= 0) {
+      angleInDegrees = 180 - angleInDegrees;
+    }
+    // quadrant 3
+    if (this.waypointPosition.x < 0 && this.waypointPosition.y <= 0) {
       angleInDegrees += 180;
-    if (adjacent > 0 && opposite < 0) angleInDegrees += 360;
+    }
+    // quadrant 4
+    if (this.waypointPosition.x > 0 && this.waypointPosition.y <= 0) {
+      angleInDegrees = 360 - angleInDegrees;
+    }
 
     return angleInDegrees;
-  }
-  getDistanceOfWaypointFromShip(): number {
-    return Math.sqrt(
-      Math.pow(this.waypoint.x - this.currentPosition.x, 2) +
-        Math.pow(this.waypoint.y - this.currentPosition.y, 2),
-    );
   }
   rotateWaypoint(
     action: ACTIONS.AntiClockwise | ACTIONS.Clockwise,
     value: number,
   ) {
-    const radius = this.getDistanceOfWaypointFromShip();
+    const radius = Math.sqrt(
+      Math.pow(this.waypointPosition.x, 2) +
+        Math.pow(this.waypointPosition.y, 2),
+    );
+
     let newAngle: number;
+
     if (action === ACTIONS.Clockwise) {
       newAngle = this.getAngleAroundShip() - value;
     } else {
@@ -94,30 +109,15 @@ export class Ship {
     }
     newAngle = (360 + newAngle) % 360;
     newAngle = degreesToRadian(newAngle);
-    this.waypoint = {
-      x: Math.round(this.currentPosition.x + radius * Math.cos(newAngle)),
-      y: Math.round(this.currentPosition.y + radius * Math.sin(newAngle)),
+    this.waypointPosition = {
+      x: Math.round(radius * Math.cos(newAngle)),
+      y: Math.round(radius * Math.sin(newAngle)),
     };
-  }
-
-  moveWaypoint(action: ACTIONS, value: number) {
-    this.waypoint = addVectors(
-      this.waypoint,
-      multiplyVectorByScale(DIRECTIONS[action], value),
-    );
   }
   forward(value: number) {
-    const relative = {
-      x: this.waypoint.x - this.currentPosition.x,
-      y: this.waypoint.y - this.currentPosition.y,
-    };
     this.currentPosition = {
-      x: this.currentPosition.x + relative.x * value,
-      y: this.currentPosition.y + relative.y * value,
-    };
-    this.waypoint = {
-      x: this.currentPosition.x + relative.x,
-      y: this.currentPosition.y + relative.y,
+      x: this.currentPosition.x + this.waypointPosition.x * value,
+      y: this.currentPosition.y + this.waypointPosition.y * value,
     };
   }
   processInstruction(instruction: Instruction) {
@@ -140,5 +140,8 @@ export class Ship {
   }
   calculateRectilinearDistance() {
     return Math.abs(this.currentPosition.x) + Math.abs(this.currentPosition.y);
+  }
+  resetWayPoint(waypointPosition: Vector) {
+    this.waypointPosition = waypointPosition;
   }
 }
